@@ -36,11 +36,10 @@ BEGIN{
     if (status_code >= 400 && status_code < 500) { # si el código de estado es un error de cliente
         clients_errors[status_code] += 1; # diccionario que mapea diferentes códigos de error de cliente a la cantidad de veces que ocurrieron
         errors_client += 1; # contador de errores de cliente
-    }else if (status_code >= 500 && status_code < 600) {
-        server_errors[status_code] += 1;
-        errors_server += 1;
+    }else if (status_code >= 500 && status_code < 600) { # si el código de estado es un error de servidor
+        server_errors[status_code] += 1; # diccionario que mapea diferentes códigos de error de servidor a la cantidad de veces que ocurrieron
+        errors_server += 1; # contador de errores de servidor
     }
-
 }
 
 
