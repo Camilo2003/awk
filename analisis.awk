@@ -7,3 +7,6 @@ BEGIN{
     total_requests = 0;
     total_response_size = 0;
 }
+
+{print}
+
