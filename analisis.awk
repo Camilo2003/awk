@@ -5,12 +5,11 @@
 # ejemplo: 127.0.0.1 - - [01/Jan/2023:12:00:00 +0000] "GET /index.html HTTP/1.1" 200 1024
 
 # Variables para estadísticas generales
-
 BEGIN{
     total_requests = 0; # Total de peticiones
     total_response_size = 0; # Total de bytes transferidos
-    errors_client = 0; # Total de errores de cliente (400-499)
-    errors_server = 0; # Total de errores de servidor (500-599)
+    errors_client = 0; # Total de errores de cliente
+    errors_server = 0; # Total de errores de servidor
 }
 
 # Regla para procesar cada línea del archivo de registro
@@ -30,6 +29,18 @@ BEGIN{
     # Extraer direcciones IP 
     ip = $1; # esta es la dirección IP del cliente
     ips[ip] += 1; # este es un diccionario que mapea direcciones IP a la cantidad de veces que se solicitaron
+
+    # Contar errores de cliente y servidor
+    status_code = $9; # este es el código de estado de la respuesta
+    # print status_code;
+    if (status_code >= 400 && status_code < 500) { # si el código de estado es un error de cliente
+        clients_errors[status_code] += 1; # diccionario que mapea diferentes códigos de error de cliente a la cantidad de veces que ocurrieron
+        errors_client += 1; # contador de errores de cliente
+    }else if (status_code >= 500 && status_code < 600) {
+        server_errors[status_code] += 1;
+        errors_server += 1;
+    }
+
 }
 
 
@@ -46,9 +57,18 @@ END {
         print resource ":", resources[resource], "solicitudes";
     }
     
-    print "\nDirecciones IP Únicas:";
+    print "\nDirecciones IP";
     for (ip in ips) {
         print ip ":", ips[ip], "solicitudes";
     }
-    
+
+    print "\nErrores de Cliente:";
+    for (error in clients_errors) {
+        print error ":", clients_errors[error], "errores";
+    }
+
+    print "\nErrores de Servidor:";
+    for (error in server_errors) {
+        print error ":", server_errors[error], "errores";
+    }
 }
